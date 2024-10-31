@@ -1,11 +1,44 @@
-import { Card } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+
+  const { data: weatherData } = useQuery({
+    queryKey: ['weather'],
+    queryFn: async () => {
+      const response = await axios.get('http://localhost:3001/api/weather/Lima');
+      return response.data;
+    }
+  });
+
+  const { data: cropPrediction } = useQuery({
+    queryKey: ['cropPrediction'],
+    queryFn: async () => {
+      const response = await axios.post('http://localhost:3001/api/crop-prediction', {
+        temperature: 25,
+        humidity: 60,
+        rainfall: 150
+      });
+      return response.data;
+    }
+  });
+
+  const mockData = [
+    { name: 'Ene', value: 400 },
+    { name: 'Feb', value: 300 },
+    { name: 'Mar', value: 600 },
+    { name: 'Abr', value: 800 },
+    { name: 'May', value: 500 }
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -28,30 +61,137 @@ const Dashboard = () => {
       </nav>
 
       <main className="container mx-auto p-4 space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Weather Conditions</h2>
-            <p className="text-gray-600">Weather data will be displayed here</p>
-          </Card>
+        <Tabs defaultValue="predictions" className="space-y-4">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="predictions">Predicciones</TabsTrigger>
+            <TabsTrigger value="optimization">Optimización</TabsTrigger>
+            <TabsTrigger value="analysis">Análisis</TabsTrigger>
+            <TabsTrigger value="data">Gestión de Datos</TabsTrigger>
+          </TabsList>
 
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Distribution Centers</h2>
-            <p className="text-gray-600">Distribution center map will be displayed here</p>
-          </Card>
+          <TabsContent value="predictions" className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Predicción de Cultivos</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {cropPrediction && (
+                    <div className="space-y-2">
+                      <p>Cultivo Recomendado: {cropPrediction.recommended_crop}</p>
+                      <p>Confianza: {(cropPrediction.confidence * 100).toFixed(1)}%</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Condiciones Climáticas</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {weatherData && (
+                    <div className="space-y-2">
+                      <p>Temperatura: {weatherData.temperature}°F</p>
+                      <p>Descripción: {weatherData.description}</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
 
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Supply Chain Metrics</h2>
-            <p className="text-gray-600">Key metrics will be displayed here</p>
-          </Card>
-        </div>
+          <TabsContent value="optimization" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Optimización de Cadena de Suministro</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="w-full h-[300px]">
+                  <LineChart width={800} height={300} data={mockData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Line type="monotone" dataKey="value" stroke="#8884d8" />
+                  </LineChart>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        <Card className="p-6">
-          <h2 className="text-xl font-semibold mb-4">Data Input</h2>
-          <div className="space-y-4">
-            <p className="text-gray-600">Location and crop type input form will be added here</p>
-            <Button>Add New Data</Button>
-          </div>
-        </Card>
+          <TabsContent value="analysis" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Análisis de Resultados</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Métrica</TableHead>
+                      <TableHead>Valor</TableHead>
+                      <TableHead>Tendencia</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell>Eficiencia</TableCell>
+                      <TableCell>85%</TableCell>
+                      <TableCell>↑</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Costos</TableCell>
+                      <TableCell>$12,450</TableCell>
+                      <TableCell>↓</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Producción</TableCell>
+                      <TableCell>2,500 ton</TableCell>
+                      <TableCell>↑</TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="data" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Gestión de Datos</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <Button>Importar Datos</Button>
+                    <Button variant="outline">Exportar Datos</Button>
+                  </div>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Fecha</TableHead>
+                        <TableHead>Tipo</TableHead>
+                        <TableHead>Estado</TableHead>
+                        <TableHead>Acciones</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      <TableRow>
+                        <TableCell>2024-03-15</TableCell>
+                        <TableCell>Producción</TableCell>
+                        <TableCell>Completado</TableCell>
+                        <TableCell>
+                          <Button variant="ghost" size="sm">Ver</Button>
+                        </TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );
