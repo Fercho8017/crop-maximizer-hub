@@ -1,0 +1,11 @@
+{
+  "name": "supply-chain-server",
+  "version": "1.0.0",
+  "description": "Backend server for Supply Chain Optimizer",
+  "main": "index.ts",
+  "scripts": {
+    "start": "ts-node index.ts",
+    "dev": "nodemon --exec ts-node index.ts",
+    "build": "tsc"
+  }
+}
