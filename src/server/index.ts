@@ -1,20 +1,43 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import axios from 'axios';
 
-// Configuración de variables de entorno
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3001;
+const PYTHON_SERVICE_URL = 'http://localhost:8000';
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Rutas básicas
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Server is running' });
+});
+
+// Nueva ruta para el clima
+app.get('/api/weather/:city', async (req, res) => {
+  try {
+    const { city } = req.params;
+    const response = await axios.get(`${PYTHON_SERVICE_URL}/weather/${city}`);
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error al obtener el clima' });
+  }
+});
+
+// Nueva ruta para predicción de cultivos
+app.post('/api/crop-prediction', async (req, res) => {
+  try {
+    const { temperature, humidity, rainfall } = req.body;
+    const response = await axios.get(`${PYTHON_SERVICE_URL}/crop-prediction`, {
+      params: { temperature, humidity, rainfall }
+    });
+    res.json(response.data);
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Error en la predicción de cultivos' });
+  }
 });
 
 // Ruta de autenticación
@@ -42,7 +65,6 @@ app.use((err: Error, req: express.Request, res: express.Response, next: express.
   res.status(500).json({ success: false, message: 'Error interno del servidor' });
 });
 
-// Iniciar servidor
 app.listen(port, () => {
-  console.log(`Servidor corriendo en http://localhost:${port}`);
+  console.log(`Servidor Express corriendo en http://localhost:${port}`);
 });
