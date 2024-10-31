@@ -30,6 +30,12 @@ const Login = () => {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
+    if (e.key && e.key.toLowerCase() === 'enter') {
+      handleSubmit(e);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-green-100 flex items-center justify-center p-4">
       <Card className="w-full max-w-md p-8 space-y-6 bg-white/90 backdrop-blur">
@@ -38,7 +44,7 @@ const Login = () => {
           <p className="text-gray-500">Sign in to access your dashboard</p>
         </div>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} onKeyDown={handleKeyDown} className="space-y-4">
           <div className="space-y-2">
             <label className="text-sm font-medium" htmlFor="email">Email</label>
             <Input
