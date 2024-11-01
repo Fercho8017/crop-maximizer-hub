@@ -30,8 +30,8 @@ const Login = () => {
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key && e.key.toLowerCase() === 'enter') {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
       handleSubmit(e);
     }
   };
