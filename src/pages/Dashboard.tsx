@@ -7,6 +7,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'r
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { DataManagementTab } from '@/components/data-management/DataManagementTab';
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
@@ -157,39 +158,7 @@ const Dashboard = () => {
           </TabsContent>
 
           <TabsContent value="data" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Gestión de Datos</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <Button>Importar Datos</Button>
-                    <Button variant="outline">Exportar Datos</Button>
-                  </div>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Fecha</TableHead>
-                        <TableHead>Tipo</TableHead>
-                        <TableHead>Estado</TableHead>
-                        <TableHead>Acciones</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      <TableRow>
-                        <TableCell>2024-03-15</TableCell>
-                        <TableCell>Producción</TableCell>
-                        <TableCell>Completado</TableCell>
-                        <TableCell>
-                          <Button variant="ghost" size="sm">Ver</Button>
-                        </TableCell>
-                      </TableRow>
-                    </TableBody>
-                  </Table>
-                </div>
-              </CardContent>
-            </Card>
+            <DataManagementTab />
           </TabsContent>
         </Tabs>
       </main>
