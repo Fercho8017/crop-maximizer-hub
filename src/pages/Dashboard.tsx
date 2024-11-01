@@ -15,7 +15,7 @@ const Dashboard = () => {
   const { data: weatherData } = useQuery({
     queryKey: ['weather'],
     queryFn: async () => {
-      const response = await axios.get('http://localhost:3001/api/weather/Lima');
+      const response = await axios.get('http://localhost:8000/api/weather/Lima/');
       return response.data;
     }
   });
@@ -23,7 +23,7 @@ const Dashboard = () => {
   const { data: cropPrediction } = useQuery({
     queryKey: ['cropPrediction'],
     queryFn: async () => {
-      const response = await axios.post('http://localhost:3001/api/crop-prediction', {
+      const response = await axios.post('http://localhost:8000/api/crop-prediction/', {
         temperature: 25,
         humidity: 60,
         rainfall: 150
