@@ -6,6 +6,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'r
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
 import { DataManagementTab } from '@/components/data-management/DataManagementTab';
 import { PredictionsTab } from '@/components/predictions/PredictionsTab';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
