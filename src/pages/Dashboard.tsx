@@ -1,37 +1,15 @@
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
-import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import { DataManagementTab } from '@/components/data-management/DataManagementTab';
+import { PredictionsTab } from '@/components/predictions/PredictionsTab';
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-
-  const { data: weatherData } = useQuery({
-    queryKey: ['weather'],
-    queryFn: async () => {
-      const response = await axios.get('http://localhost:8000/api/weather/Lima/');
-      return response.data;
-    }
-  });
-
-  const { data: cropPrediction } = useQuery({
-    queryKey: ['cropPrediction'],
-    queryFn: async () => {
-      const response = await axios.post('http://localhost:8000/api/crop-prediction/', {
-        temperature: 25,
-        humidity: 60,
-        rainfall: 150
-      });
-      return response.data;
-    }
-  });
 
   const mockData = [
     { name: 'Ene', value: 400 },
@@ -70,35 +48,8 @@ const Dashboard = () => {
             <TabsTrigger value="data">Gestión de Datos</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="predictions" className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Predicción de Cultivos</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {cropPrediction && (
-                    <div className="space-y-2">
-                      <p>Cultivo Recomendado: {cropPrediction.recommended_crop}</p>
-                      <p>Confianza: {(cropPrediction.confidence * 100).toFixed(1)}%</p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Condiciones Climáticas</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {weatherData && (
-                    <div className="space-y-2">
-                      <p>Temperatura: {weatherData.temperature}°F</p>
-                      <p>Descripción: {weatherData.description}</p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
+          <TabsContent value="predictions">
+            <PredictionsTab />
           </TabsContent>
 
           <TabsContent value="optimization" className="space-y-4">
