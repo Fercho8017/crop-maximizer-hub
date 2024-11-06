@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
+import { MapPin } from "lucide-react";
 
 interface LocationFormData {
   address: string;
@@ -20,8 +21,6 @@ const LocationDistribution = () => {
   const { register, handleSubmit, setValue } = useForm<LocationFormData>();
 
   const onSubmit = (data: LocationFormData) => {
-    // Here we would typically make an API call to find the nearest distribution center
-    // For now, we'll just show a toast with the submitted data
     toast({
       title: "Información recibida",
       description: "Procesando ubicación y buscando centro de distribución más cercano...",
@@ -40,15 +39,20 @@ const LocationDistribution = () => {
   ];
 
   return (
-    <div className="container mx-auto p-6">
-      <Card className="max-w-2xl mx-auto">
-        <CardHeader>
-          <CardTitle>Información de Ubicación y Cultivo</CardTitle>
+    <div className="container mx-auto px-4 py-8 md:px-6 lg:px-8">
+      <Card className="max-w-2xl mx-auto shadow-lg">
+        <CardHeader className="space-y-2 text-center">
+          <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+            <MapPin className="w-6 h-6 text-primary" />
+          </div>
+          <CardTitle className="text-2xl md:text-3xl font-bold">
+            Información de Ubicación y Cultivo
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div className="space-y-4">
-              <div>
+            <div className="grid gap-6 md:grid-cols-2">
+              <div className="space-y-2">
                 <Label htmlFor="address">Dirección</Label>
                 <Input
                   id="address"
@@ -58,7 +62,7 @@ const LocationDistribution = () => {
                 />
               </div>
 
-              <div>
+              <div className="space-y-2">
                 <Label htmlFor="city">Ciudad</Label>
                 <Input
                   id="city"
@@ -68,7 +72,7 @@ const LocationDistribution = () => {
                 />
               </div>
 
-              <div>
+              <div className="space-y-2">
                 <Label htmlFor="state">Estado/Provincia</Label>
                 <Input
                   id="state"
@@ -78,7 +82,7 @@ const LocationDistribution = () => {
                 />
               </div>
 
-              <div>
+              <div className="space-y-2">
                 <Label htmlFor="zipCode">Código Postal</Label>
                 <Input
                   id="zipCode"
@@ -87,22 +91,22 @@ const LocationDistribution = () => {
                   className="w-full"
                 />
               </div>
+            </div>
 
-              <div>
-                <Label htmlFor="cropType">Tipo de Cultivo</Label>
-                <Select onValueChange={(value) => setValue("cropType", value)}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Seleccione un tipo de cultivo" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {cropTypes.map((crop) => (
-                      <SelectItem key={crop} value={crop}>
-                        {crop}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="cropType">Tipo de Cultivo</Label>
+              <Select onValueChange={(value) => setValue("cropType", value)}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Seleccione un tipo de cultivo" />
+                </SelectTrigger>
+                <SelectContent>
+                  {cropTypes.map((crop) => (
+                    <SelectItem key={crop} value={crop}>
+                      {crop}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <Button type="submit" className="w-full">
